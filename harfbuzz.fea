@@ -1,0 +1,51 @@
+languagesystem DFLT dflt;
+languagesystem latn dflt;
+
+@digitPlain = [zero one two three four five six seven eight nine];
+@digitInitial = [zero.0mod3 one.1mod3 two.2mod3 three.0mod3 four.1mod3 five.2mod3 six.0mod3 seven.1mod3 eight.2mod3 nine.0mod3];
+@digit0mod3 = [zero.0mod3 one.0mod3 two.0mod3 three.0mod3 four.0mod3 five.0mod3 six.0mod3 seven.0mod3 eight.0mod3 nine.0mod3];
+@digit1mod3 = [zero.1mod3 one.1mod3 two.1mod3 three.1mod3 four.1mod3 five.1mod3 six.1mod3 seven.1mod3 eight.1mod3 nine.1mod3];
+@digit2mod3 = [zero.2mod3 one.2mod3 two.2mod3 three.2mod3 four.2mod3 five.2mod3 six.2mod3 seven.2mod3 eight.2mod3 nine.2mod3];
+@digitMarked = [@digit0mod3 @digit1mod3 @digit2mod3];
+@digitUnmarked = [@digitPlain @digitPlain @digitPlain];
+@unfive0mod3 = [one.0mod3 two.0mod3 three.0mod3 four.0mod3 six.0mod3 seven.0mod3 eight.0mod3 nine.0mod3];
+@unfive1mod3 = [one.1mod3 two.1mod3 three.1mod3 four.1mod3 six.1mod3 seven.1mod3 eight.1mod3 nine.1mod3];
+@unfive2mod3 = [one.2mod3 two.2mod3 three.2mod3 four.2mod3 six.2mod3 seven.2mod3 eight.2mod3 nine.2mod3];
+@unfivePlain = [one two three four six seven eight nine];
+
+feature calt {
+
+	lookup DIGIT_MODULUS {
+		sub @digitPlain by @digitInitial;
+	} DIGIT_MODULUS;
+
+	lookup NUMBER_MODULUS {
+		sub @digit0mod3 @digit0mod3' by @digit0mod3;
+		sub @digit0mod3 @digit1mod3' by @digit1mod3;
+		sub @digit0mod3 @digit2mod3' by @digit2mod3;
+		sub @digit1mod3 @digit0mod3' by @digit1mod3;
+		sub @digit1mod3 @digit1mod3' by @digit2mod3;
+		sub @digit1mod3 @digit2mod3' by @digit0mod3;
+		sub @digit2mod3 @digit0mod3' by @digit2mod3;
+		sub @digit2mod3 @digit1mod3' by @digit0mod3;
+		sub @digit2mod3 @digit2mod3' by @digit1mod3;
+	} NUMBER_MODULUS;
+
+	lookup NUMBER_UNMARK {
+		sub @digitMarked' @digitMarked by @digitUnmarked;
+	} NUMBER_UNMARK;
+
+	lookup HARF_BUZZ_REPLACE {
+		sub [zero.0mod3 five.0mod3] by harfbuzz;
+		sub [zero.1mod3 five.1mod3] by buzz;
+		sub [zero.2mod3 five.2mod3] by buzz;
+		sub @unfive0mod3 by harf;
+		sub @unfive1mod3 by @unfivePlain;
+		sub @unfive2mod3 by @unfivePlain;
+	} HARF_BUZZ_REPLACE;
+
+	lookup HARF_BUZZ_REMOVE {
+		rsub @digitPlain' [harf buzz harfbuzz] by NULL;
+	} HARF_BUZZ_REMOVE;
+
+} calt;
